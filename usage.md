@@ -3,7 +3,7 @@
 ```python
 import os
 import boto3
-from dynamodb.insert import insert_item
+from dynamodb import insert_item
 
 def handler(event, context):
     dynamo_db = boto3.resource('dynamodb')
@@ -12,12 +12,11 @@ def handler(event, context):
             [{'tenant_id': f'{x}', 'user_id': f'{x}'} for x, in range(120)]]
 ```
 
-## get_item usage:
+## get_item usage by primary(partition key) and sort key combination:
 
 ```python
 import os
-from dynamodb.dt_select import get_item
-from dynamodb.common import Key
+from dynamodb import get_item, Key
 
 
 def handler(event, context):
@@ -31,7 +30,7 @@ def handler(event, context):
 
 ```python
 import os
-from dynamodb.dt_select import scan_table
+from dynamodb import scan_table
 
 
 def handler(event, context):
@@ -44,8 +43,7 @@ def handler(event, context):
 
 ```python
 import os
-from dynamodb.common import Key
-from dynamodb.delete import select_items
+from dynamodb import Key, select_items
 
 
 def handler(event, context):
@@ -56,7 +54,7 @@ def handler(event, context):
 
 ```python
 import os
-from dynamodb.main import truncate_table
+from dynamodb import truncate_table
 
 
 def handler(event, context):
