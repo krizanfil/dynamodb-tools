@@ -1,5 +1,5 @@
 # dynamodb-tools
-Usefull functions you can use to make your life easier when working with dynamodb via the pyton SDK (boto3). :)
+Useful functions you can use to make your life easier when working with dynamodb via the pyton SDK (boto3). :)
 
 # TODO:
 * Add tests
