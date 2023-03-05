@@ -4,16 +4,11 @@ from dataclasses import dataclass
 from typing import List, Optional, Dict, Union, Literal
 from boto3.dynamodb.types import TypeDeserializer
 
-logging.getLogger().setLevel(logging.INFO)
-
 
 @dataclass
 class Key:
     key: str
     value: any
-
-
-logging.getLogger().setLevel(logging.INFO)
 
 
 def get_inserter(key: str, value: any):
@@ -146,8 +141,8 @@ def select_items(
 
 def get_item(
     primary_key: Key,
-    sort_key: Key,
     table_name: str,
+    sort_key: Optional[Key] = None,
     dynamodb_resource: Optional['boto3.resource("dynamodb").Table'] = boto3.resource("dynamodb")
 ):
     """
@@ -156,8 +151,10 @@ def get_item(
     table = dynamodb_resource.Table(table_name)
     key = {
         primary_key.key: primary_key.value,
-        sort_key.key: sort_key.value
     }
+
+    if sort_key:
+        key[sort_key.key] = sort_key.value
 
     return table.get_item(Key=key).get('Item')
 
@@ -194,22 +191,23 @@ def truncate_table(table_name: str, dynamo: boto3.resource = boto3.resource('dyn
                 )
             else:
                 return 'Table successfully truncated'
-            return 'Ran into problems truncating table.'
 
 
-def remove_item(table_name: str, primary_key: Key, sort_key: Key):
+def delete_item(table_name: str, primary_key: Key, sort_key: Optional[Key] = None):
     """
     Deletes item from DynamoDb.
     """
-    key_value = {
+    key = {
         primary_key.key: primary_key.value,
-        sort_key.key: sort_key.value
     }
+
+    if sort_key:
+        key[sort_key.key] = sort_key.value
 
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(table_name)
 
-    return table.delete_item(Key=key_value)
+    return table.delete_item(Key=key)
 
 
 def increment_counter(
@@ -296,13 +294,13 @@ class DynamoDB:
         return insert_item(item, self.table_name, self.resource)
 
     def get_item(self, primary_key: Key, sort_key: Key):
-        return get_item(primary_key, sort_key, self.table_name, self.resource)
+        return get_item(primary_key, self.table_name, sort_key, self.resource)
 
     def scan(self):
         return scan_table(self.table_name, self.client)
 
-    def remove_item(self, primary_key: Key, sort_key: Key):
-        return remove_item(self.table_name, primary_key, sort_key)
+    def delete_item(self, primary_key: Key, sort_key: Key):
+        return delete_item(self.table_name, primary_key, sort_key)
 
     def truncate(self):
         return truncate_table(self.table_name, self.resource)
