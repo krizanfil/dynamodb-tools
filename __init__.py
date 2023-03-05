@@ -1,1 +1,1 @@
-from .dynamodb import *
+from dynamodb import *
