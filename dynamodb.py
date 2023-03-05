@@ -4,16 +4,11 @@ from dataclasses import dataclass
 from typing import List, Optional, Dict, Union, Literal
 from boto3.dynamodb.types import TypeDeserializer
 
-logging.getLogger().setLevel(logging.INFO)
-
 
 @dataclass
 class Key:
     key: str
     value: any
-
-
-logging.getLogger().setLevel(logging.INFO)
 
 
 def get_inserter(key: str, value: any):
@@ -196,7 +191,6 @@ def truncate_table(table_name: str, dynamo: boto3.resource = boto3.resource('dyn
                 )
             else:
                 return 'Table successfully truncated'
-            return 'Ran into problems truncating table.'
 
 
 def delete_item(table_name: str, primary_key: Key, sort_key: Optional[Key] = None):
@@ -305,7 +299,7 @@ class DynamoDB:
     def scan(self):
         return scan_table(self.table_name, self.client)
 
-    def remove_item(self, primary_key: Key, sort_key: Key):
+    def delete_item(self, primary_key: Key, sort_key: Key):
         return delete_item(self.table_name, primary_key, sort_key)
 
     def truncate(self):
